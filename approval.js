@@ -1,46 +1,45 @@
-const express = require('express');
-const bodyParser = require('body-parser');
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Approval Script</title>
+</head>
+<body>
+    <h1>Welcome to the Approval Page</h1>
+    
+    <p>Kripya apne username aur password daalain:</p>
+    
+    <form id="approvalForm">
+        <label for="username">GURU</label>
+        <input type="text" id="username" required><br><br>
+        
+        <label for="password">GURU12:</label>
+        <input type="password" id="password" required><br><br>
+        
+        <button type="submit">Submit</button>
+    </form>
 
-const app = express();
-app.use(bodyParser.json());
+    <div id="message"></div>
 
-const authorizedUsers = {
-    username: "GURU",
-    password: "GURU12"
-};
+    <script>
+        const correctUsername = "GURU";
+        const correctPassword = "GURU12";
 
-let approvals = [];
+        document.getElementById('approvalForm').addEventListener('submit', function(event) {
+            event.preventDefault();
 
-function authenticate(req, res, next) {
-    const { username, password } = req.body;
-    if (username === authorizedUsers.username && password === authorizedUsers.password) {
-        next();
-    } else {
-        res.status(401).json({ message: 'Unauthorized' });
-    }
-}
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
 
-app.post('/request-approval', (req, res) => {
-    const { userId, whatsappNumber } = req.body;
-    approvals.push({ userId, whatsappNumber, isApproved: false, requestedAt: new Date() });
-    res.json({ message: 'Approval requested. We will contact you soon.', userId });
-});
-
-app.post('/approve-user', authenticate, (req, res) => {
-    const { userId } = req.body;
-    const user = approvals.find(a => a.userId === userId);
-    if (user) {
-        user.isApproved = true;
-        setTimeout(() => {
-            user.isApproved = false;
-        }, 30 * 24 * 60 * 60 * 1000);
-        res.json({ message: 'User approved successfully!' });
-    } else {
-        res.status(404).json({ message: 'User not found' });
-    }
-});
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+            if (username === correctUsername && password === correctPassword) {
+                document.getElementById('message').innerHTML = 'Aap ka approval ho gaya hai! WhatsApp par contact karke hum se baat karein.';
+                // Yahan aap jaise chahain actions perform kar sakte hain.
+                // For example, redirect to another page or show options.
+            } else {
+                document.getElementById('message').innerHTML = 'Galat username ya password! Dobara koshish karein.';
+            }
+        });
+    </script>
+</body>
+</html>
